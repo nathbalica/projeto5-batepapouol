@@ -1,0 +1,255 @@
+body{
+    font-family: 'Roboto', sans-serif;
+    background-color:  #F3F3F3;
+}
+strong { font-weight: bold; }
+
+header{
+    width: 100vw;
+    height: 80px;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.05);
+    -moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.05);
+    position: fixed;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    z-index: 1;
+}
+
+header div, footer > div{
+    width: 100%;
+    padding: 15px 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header ion-icon{
+    font-size: 42px;
+}
+
+header button{
+    background-color: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main{
+    margin: 80px 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+main::-webkit-scrollbar {
+    display: none;
+  }
+
+main ul{
+    margin-top: 26px;
+    font-size: 14px;
+}
+
+main li{
+    background-color: #FFDEDE;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 4px;
+    word-break: break-word;
+    line-height: 20px;
+}
+
+.enter-out-room{
+    background-color: #DCDCDC;
+    border-radius: 2px;
+}
+
+.time{
+    color: #AAAAAA;
+    margin-right: 5px;
+}
+
+.public{
+    background-color: #FFFF;
+    border-radius: 2px;
+}
+
+footer{
+    width: 100vw;
+    height: 80px;
+    background-color: #fff;
+    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    z-index: 1;
+}
+
+
+footer .input-message{
+    width: 100%;
+    flex-direction: column;
+    letter-spacing: -0.5px;
+}
+
+footer input{
+    width: 100%;
+    flex: 1;
+    border: none;
+    font-weight: 400;
+    resize: none;
+    height: 60px;
+    outline: none;
+}
+
+footer input::placeholder{
+    font-style: normal;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 21px;
+    border: none;
+    color: #000000;
+}
+
+.input-message{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    letter-spacing: -0.5px;
+}
+
+.sending-msg{
+    width: 100%;
+    font-size: 14px;
+    line-height: 25px;
+    color: #505050;
+
+    display: flex;
+    align-items: center;
+    margin-top: 5px;    
+}
+
+.typeMsg{
+    margin-left: 2px;
+}
+
+footer button{
+    background-color: transparent;
+    border: none;
+}
+
+footer ion-icon{
+    font-size: 26px;
+}
+
+.user{
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+
+
+
+.menu-background{
+    background: rgba(0, 0, 0, 0.6);
+    width:100%;
+    height: 100%;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:2;
+    transition:all 150ms linear;
+}
+
+
+aside.sidebar{
+    z-index: 3;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+
+    transition: all 600ms linear;
+    overflow-y: scroll;
+    opacity: 0
+}
+
+.sidebar-visible{
+    opacity: 1;
+}
+
+/* aside.sidebar.hidden {
+    right: -310px;
+} */
+
+.choose-contact{
+    padding: 20px 20px 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 700;
+    color: #000000;
+}
+
+.contacts{
+    margin-top: 5px;
+}
+
+
+aside.sidebar li{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+    word-break: break-word;
+
+}
+
+aside.sidebar ion-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    margin-top: -2px;
+    flex-shrink: 0;
+  }
+
+.text-choose-visibility{
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.hidden-menu{
+    display: none;
+}
+
+.hidden{
+    display: none;
+}
+
+
+

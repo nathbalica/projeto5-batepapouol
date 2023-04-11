@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+
+    <link href="./assets/css/reset.css" rel="stylesheet">
+    <link href="./assets/css/style.css" rel="stylesheet">
+
+    <title>projeto5-batepapouol</title>
+</head>
+<body>
+    <header>
+        <div>
+            <img src="./assets/images/logo.png" alt="">
+            <button>
+                <ion-icon name="people"></ion-icon>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <ul class="chats">
+            <li class="enter-out-room">
+                <span class="time">(09:21:45)</span>
+                <span>João</span> 
+                <span>entra na sala</span>
+            </li>
+
+            <li class="public">
+                <span class="time">(09:21:45)</span>
+                    <strong> João</strong>
+                        <span>para</span>
+                    <strong>Todos:</strong>
+                <span>Bom dia</span>
+            </li>
+
+            <li class="private">
+                <span class="time">(09:21:45)</span>
+                    <strong> João</strong>
+                        <span>reservadamente para</span>
+                    <strong>Maria:</strong>
+                <span> Oi gatinha quer tc?</span>
+            </li>
+        </ul>
+
+    </main>
+
+    <footer>
+        <div class="input-message">
+            <input placeholder="Escreva aqui..." class="input-write">
+            <div class="sending-msg hidden">
+                <span class="sending">Enviando para</span> 
+                <span class="send-user">Todos</span> 
+                <span class="typeMsg">(publicamente)</span>
+            </div>
+        </div>
+        <button>
+            <ion-icon name="paper-plane-outline"></ion-icon>
+        </button>
+    </footer>
+
+    <div class="menu-background hidden-menu"></div>
+
+    <aside class="sidebar hidden">
+        <div class="choose-contact">Escolha um contato para enviar mensagem</div>
+        <ul class="contacts">
+            <li class="contacts-message">
+                <ion-icon name="people"></ion-icon>
+                <span>Todos</span>
+            </li>
+
+            <li class="contacts-message">
+                <ion-icon name="person-circle"></ion-icon>
+                <span>João</span>
+            </li>
+
+            <li class="contacts-message select">
+                <ion-icon name="person-circle"></ion-icon>
+                <span>Todos</span>
+                <ion-icon data-test="check" class="checkmark checked" name="checkmark-outline"></ion-icon>
+            </li>
+        </ul>
+
+        <div class="text-choose-visibility">Escolha a visibilidade</div>
+
+        <ul class="choose-visibility">
+            <li class="visibility">
+                <ion-icon name="lock-open" ></ion-icon>
+                <span>Publico</span>
+            </li>
+
+            <li class="visibility select">
+                <ion-icon name="lock-open" ></ion-icon>
+                <span>Reservadamente</span>
+                <ion-icon data-test="check" class="checkmark checked" name="checkmark-outline"></ion-icon>
+            </li>
+        </ul>
+
+        
+    </aside>
+
+
+    
+    <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+    <script src="./assets/js/main.js"></script>
+</body>
+</html>
