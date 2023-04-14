@@ -13,10 +13,12 @@ function scrollToBottom() {
 
 
 function renderChats() {
-  axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
-    .then(renderMessages)
-    .catch(errorHandler);
-}
+  if (checkIfUserExists()){
+    axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
+      .then(renderMessages)
+      .catch(errorHandler);
+    }
+  }
 
 function renderMessages(response) {
   const ulMessages = document.querySelector('.chats');
