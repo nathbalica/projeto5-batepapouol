@@ -14,7 +14,7 @@ function scrollToBottom() {
 
 
 function renderChats() {
-  if (logged){
+  if (logged && checkIfUserExists()){
     axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
       .then(renderMessages)
       .catch(errorHandler);
@@ -86,7 +86,7 @@ function renderMessages(response) {
 renderChats();
 
 function sendMessages(type='message'){
-  if (logged){
+  if (logged && checkIfUserExists()){
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR');
   
@@ -126,7 +126,7 @@ function userOnline(user) {
 }
 
 function userEntered(user) {
-  if (logged){
+  if (logged && checkIfUserExists()){
     axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
       .then(() => {
           responseReceived();
@@ -144,7 +144,6 @@ function checkIfUserExists(user) {
     .then(response => {
       const participants = response.data;
       const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
-      console.log(participants)
       if (existingUser) {
         console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
         userRegister();
