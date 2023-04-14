@@ -156,12 +156,12 @@ footer ion-icon{
     font-size: 26px;
 }
 
-.user{
+/* .user{
     display: inline-block;
     white-space: nowrap;
     overflow: hidden; 
     text-overflow: ellipsis;
-}
+} */
 
 
 
@@ -277,8 +277,15 @@ aside.sidebar ion-icon {
 
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Centraliza horizontalmente */
     display: none;
+
+}
+
+
+.visible{
+    display: inline;
+    display: flex;
 }
 
 .input-screen-logo{
@@ -286,6 +293,7 @@ aside.sidebar ion-icon {
     height: 92px;
     margin-top: 72px;
     margin-bottom: 94px;
+
 }
 
 .input-screen-logo img{
@@ -323,6 +331,8 @@ aside.sidebar ion-icon {
     color: #696969;
     border: none;
 }
+
+
 
 
 

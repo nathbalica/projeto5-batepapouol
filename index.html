@@ -16,18 +16,23 @@
 </head>
 <body>
 
-    <div class="input-screen">
+    <div class="input-screen visible">
         <div class="input-screen-logo">
             <img src="./assets/images//logo-screen.png">
         </div>
 
         <div class="inputs">
             <input placeholder="Digite seu nome" class="input-name">
-            <button class="button-enter">
+            <button class="button-enter" onclick="userRegister()">
                 Entrar
             </button>
         </div>
+        <div class="loading hidden">
+            <img src="./assets/images/loading.gif" alt="">
+        </div>
     </div>
+
+
 
     <header>
         <div>
@@ -40,7 +45,7 @@
 
     <main>
         <ul class="chats">
-            <li class="enter-out-room">
+            <!-- <li class="enter-out-room">
                 <span class="time">(09:21:45)</span>
                 <span>João</span> 
                 <span>entra na sala</span>
@@ -60,7 +65,7 @@
                         <span>reservadamente para</span>
                     <strong>Maria:</strong>
                 <span> Oi gatinha quer tc?</span>
-            </li>
+            </li> -->
         </ul>
 
     </main>
@@ -74,7 +79,7 @@
                 <span class="typeMsg">(publicamente)</span>
             </div>
         </div>
-        <button>
+        <button onclick="sendMessages()">
             <ion-icon name="paper-plane-outline"></ion-icon>
         </button>
     </footer>
@@ -120,7 +125,7 @@
     </aside>
 
 
-    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
     <script src="./assets/js/main.js"></script>
 </body>
