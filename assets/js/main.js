@@ -3,6 +3,7 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 // let currentUsers = [];
 let nameInput;
 let userName;
+let logged = false;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -13,11 +14,12 @@ function scrollToBottom() {
 
 
 function renderChats() {
-  if (checkIfUserExists()){
+  if (logged){
     axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
       .then(renderMessages)
       .catch(errorHandler);
     }
+    return;
   }
 
 function renderMessages(response) {
@@ -84,28 +86,31 @@ function renderMessages(response) {
 renderChats();
 
 function sendMessages(type='message'){
-
-  const now = new Date();
-  const time = now.toLocaleTimeString('pt-BR');
-
-  nameInput = document.querySelector(".input-name");
-  const text = document.querySelector('.input-write');
+  if (logged){
+    const now = new Date();
+    const time = now.toLocaleTimeString('pt-BR');
   
-  const message = {
-    from: nameInput.value,
-    to: "Todos",
-    text: text.value,
-    type: type, // ou "private_message" para o bônus
-    time: time
+    nameInput = document.querySelector(".input-name");
+    const text = document.querySelector('.input-write');
+    
+    const message = {
+      from: nameInput.value,
+      to: "Todos",
+      text: text.value,
+      type: type, // ou "private_message" para o bônus
+      time: time
+    }
+  
+    console.log(message)
+  
+    axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
+    .then(responseReceived)
+    .catch(erroMessage);
+    }
+    return;
   }
-
-  console.log(message)
-
-  axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-  .then(responseReceived)
-  .catch(erroMessage);
-}
   
+
 
 function userOnline(user) {
   // Envia a requisição POST para manter o usuário online
@@ -121,14 +126,17 @@ function userOnline(user) {
 }
 
 function userEntered(user) {
-  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-    .then(() => {
-        responseReceived();
-        renderChats(); // atualiza a lista de usuários
-    })
-    .catch(errorHandler);
-  // Chama a função userOnline para manter o usuário online
-  userOnline(user);
+  if (logged){
+    axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
+      .then(() => {
+          responseReceived();
+          renderChats(); // atualiza a lista de usuários
+      })
+      .catch(errorHandler);
+    // Chama a função userOnline para manter o usuário online
+    userOnline(user);
+  }
+  return;
 }
 
 function checkIfUserExists(user) {
@@ -142,6 +150,7 @@ function checkIfUserExists(user) {
         userRegister();
       } else {
         // Fazer a requisição para o servidor
+        logged = true;
         userEntered(user);
       }
     })
@@ -162,6 +171,7 @@ function userRegister() {
   };
 
   checkIfUserExists(user);
+  
   
   document.querySelector('.input-screen').classList.remove('visible');
 }
