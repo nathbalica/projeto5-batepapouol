@@ -23,12 +23,12 @@ function renderChats() {
 
 function renderMessages(response) {
   const ulMessages = document.querySelector('.chats');
-  const messages = response.data;
-  const enteredUsers = [];
-  const exitedUsers = [];
-  const renderedMessages = [];
+  let messages = response.data;
+  let enteredUsers = [];
+  let exitedUsers = [];
+  let renderedMessages = [];
 
-  messages.forEach((message) => {
+  messages.forEach(message => {
     let liClass = '';
     let messageContent = '';
 
@@ -56,7 +56,7 @@ function renderMessages(response) {
         break;
       case 'private_message':
         liClass = 'private-message private';
-        messageContent = `<strong>${message.from}</strong> reservadamente para <strong>${message.to}</strong>: ${message.text}`;
+        messageContent =  `<strong>${message.from}</strong> reservadamente para <strong>${message.to}</strong>: ${message.text}`;
         break;
       default:
         console.error(`Unknown message type: ${message.type}`);
@@ -69,19 +69,20 @@ function renderMessages(response) {
         ${messageContent}
       </li>
     `;
-
-    // Verifica se a mensagem já existe na lista de mensagens
-    if (!ulMessages.innerHTML.includes(renderedMessage)) {
-      // Adiciona a mensagem à lista de mensagens renderizadas
+    
+    if (!renderedMessages.includes(renderedMessage)) {
       renderedMessages.push(renderedMessage);
     }
   });
 
   // Renderiza apenas as novas mensagens
-  ulMessages.insertAdjacentHTML('beforeend', renderedMessages.join(''));
+  const newMessages = renderedMessages.filter(message => !ulMessages.innerHTML.includes(message));
+  ulMessages.innerHTML += newMessages.join('');
 
   scrollToBottom();
 }
+
+renderChats();
 
 function sendMessages(type='message'){
   if (logged){
@@ -136,8 +137,8 @@ function checkIfUserExists(user) {
   return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
     .then(response => {
       const participants = response.data;
-      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase() && participant.status === 'online');
-      
+      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
+      console.log(participants)
       if (existingUser) {
         return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
       } else {
@@ -155,6 +156,12 @@ function userRegister() {
   // pegar o nome do input
   nameInput = document.querySelector(".input-name");
   userName = nameInput.value
+
+  // verificar se o nome é válido
+  if (!userName) {
+    console.log('Nome inválido.');
+    return;
+  }
 
   // criar objeto com os dados do usuario
   const user = {
@@ -183,6 +190,7 @@ function erroMessage(error) {
     console.log('Menssagem nao enviada com sucesso!');
   }
 }
+
 
 function errorHandler(error) {
   if (error.response && error.response.status === 400) {
