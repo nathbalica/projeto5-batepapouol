@@ -120,11 +120,11 @@ function userOnline(user) {
 }
 
 function userEntered(user) {
-  logged = true
   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-    .then(() => {
-        responseReceived();
-        renderChats(); // atualiza a lista de usuários
+  .then(() => {
+      logged = true
+      responseReceived();
+      renderChats(); // atualiza a lista de usuários
     })
     .catch(errorHandler);
   // Chama a função userOnline para manter o usuário online
@@ -186,6 +186,7 @@ function responseReceived(response) {
 function erroMessage(error) {
   if (error.response && error.response.status === 400) {
     console.log('Menssagem nao enviada com sucesso!');
+    location.reload();
   }
 }
 
