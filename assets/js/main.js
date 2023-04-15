@@ -120,61 +120,81 @@ function userOnline(user) {
   });
 }
 
-function userEntered(user) {
-  logged = true
-  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-    .then(() => {
-        responseReceived();
-        renderChats(); // atualiza a lista de usuários
-    })
-    .catch(errorHandler);
-  // Chama a função userOnline para manter o usuário online
-  userOnline(user);
-}
+// function userEntered(user) {
+//   logged = true
+//   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
+//     .then(() => {
+//         responseReceived();
+//         renderChats(); // atualiza a lista de usuários
+//     })
+//     .catch(errorHandler);
+//   // Chama a função userOnline para manter o usuário online
+//   userOnline(user);
+// }
 
-function checkIfUserExists(user) {
-  return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
-    .then(response => {
-      const participants = response.data;
-      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase() && participant.status === 'online');
+// function checkIfUserExists(user) {
+//   return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
+//     .then(response => {
+//       const participants = response.data;
+//       const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase() && participant.status === 'online');
       
-      if (existingUser) {
-        return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
-      } else {
-        // Fazer a requisição para o servidor
-        userEntered(user);
-      }
-    })
-    .catch(error => {
-      console.error(error.message);
-      return Promise.reject(error);
-    });
-}
+//       if (existingUser) {
+//         return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
+//       } else {
+//         // Fazer a requisição para o servidor
+//         userEntered(user);
+//       }
+//     })
+//     .catch(error => {
+//       console.error(error.message);
+//       return Promise.reject(error);
+//     });
+// }
 
 function userRegister() {
   // pegar o nome do input
   nameInput = document.querySelector(".input-name");
   userName = nameInput.value
 
+  while(nameInput === '' || nameInput === null){
+    alert('Nome de usuário inválido! Digite um nome valido');
+    document.querySelector('.input-screen').classList.add('visible');
+  }
+
   // criar objeto com os dados do usuario
   const user = {
     name: userName
   };
 
-  // verificar se o usuário já existe
-  checkIfUserExists(user)
-    .then(() => {
-      // esconder a tela de entrada
-      document.querySelector('.input-screen').classList.remove('visible');
-    })
-    .catch(() => {
-      // mostrar a tela de entrada novamente
-      document.querySelector('.input-screen').classList.add('visible');
+  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
+  .then(response => {
+          logged = true;
+          document.querySelector('.input-screen').classList.remove('visible');
+          responseReceived(response);
+          renderChats(); // atualiza a lista de usuários
+        }
+      )
+
+  .catch(error => {
+      console.log(error)
+      if ( error.response.status === 400 ){
+        alert('Nome de usuário inválido! Digite um nome valido');
+        document.querySelector('.input-screen').classList.add('visible');
+    } else {
+        alert('Ocorreu um erro no servidor! Tente novamente mais tarde');
+      }    
     });
+  // Chama a função userOnline para manter o usuário online
+  userOnline(user);
 }
 
+function errorHandler() {
+    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
+    window.location.reload(true);
+    userRegister();
+}
 function responseReceived(response) {
-  console.log(`sucesso ${response.data}!!!!! :D`);
+  console.log(`sucesso ${response}!!!!! :D`);
   console.log(response);
 }
 
@@ -184,13 +204,6 @@ function erroMessage(error) {
   }
 }
 
-function errorHandler(error) {
-  if (error.response && error.response.status === 400) {
-    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
-    window.location.reload(true);
-    userRegister();
-  }
-}
 
 function clearTextArea(){
   inputChat.value = '';
