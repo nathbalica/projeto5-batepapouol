@@ -82,24 +82,19 @@ function renderMessages(response) {
   scrollToBottom();
 }
 
-function sendMessages(){
+function sendMessages(type='message'){
   if (logged){
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR');
   
     nameInput = document.querySelector(".input-name");
     const text = document.querySelector('.input-write');
-
-    if (!text.value) {
-      console.info('O campo de mensagem está vazio!');
-      return;
-    }
     
     const message = {
       from: nameInput.value,
       to: "Todos",
       text: text.value,
-      type: 'message', // ou "private_message" para o bônus
+      type: type, // ou "private_message" para o bônus
       time: time
     }
     if (logged){
@@ -134,6 +129,7 @@ function userEntered(user) {
     .catch(errorHandler);
   // Chama a função userOnline para manter o usuário online
   userOnline(user);
+  setInterval(renderChats, 500);
 }
 
 function checkIfUserExists(user) {
@@ -190,7 +186,7 @@ function responseReceived(response) {
 
 function erroMessage(error) {
   if (error.response && error.response.status === 400) {
-    console.info('Menssagem nao enviada com sucesso!');
+    console.log('Menssagem nao enviada com sucesso!');
   }
 }
 
@@ -220,4 +216,4 @@ inputChat.addEventListener('keypress', function(e){
   }
 }, false);
 
-setInterval(renderChats, 1000);
+
