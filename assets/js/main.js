@@ -23,12 +23,12 @@ function renderChats() {
 
 function renderMessages(response) {
   const ulMessages = document.querySelector('.chats');
-  const messages = response.data;
-  const enteredUsers = [];
-  const exitedUsers = [];
-  const renderedMessages = [];
+  let messages = response.data;
+  let enteredUsers = [];
+  let exitedUsers = [];
+  let renderedMessages = [];
 
-  messages.forEach((message) => {
+  messages.forEach(message => {
     let liClass = '';
     let messageContent = '';
 
@@ -56,7 +56,7 @@ function renderMessages(response) {
         break;
       case 'private_message':
         liClass = 'private-message private';
-        messageContent = `<strong>${message.from}</strong> reservadamente para <strong>${message.to}</strong>: ${message.text}`;
+        messageContent =  `<strong>${message.from}</strong> reservadamente para <strong>${message.to}</strong>: ${message.text}`;
         break;
       default:
         console.error(`Unknown message type: ${message.type}`);
@@ -69,16 +69,15 @@ function renderMessages(response) {
         ${messageContent}
       </li>
     `;
-
-    // Verifica se a mensagem já existe na lista de mensagens
-    if (!ulMessages.innerHTML.includes(renderedMessage)) {
-      // Adiciona a mensagem à lista de mensagens renderizadas
+    
+    if (!renderedMessages.includes(renderedMessage)) {
       renderedMessages.push(renderedMessage);
     }
   });
 
   // Renderiza apenas as novas mensagens
-  ulMessages.insertAdjacentHTML('beforeend', renderedMessages.join(''));
+  const newMessages = renderedMessages.filter(message => !ulMessages.innerHTML.includes(message));
+  ulMessages.innerHTML += newMessages.join('');
 
   scrollToBottom();
 }
