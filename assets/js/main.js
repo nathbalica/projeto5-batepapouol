@@ -53,9 +53,9 @@ function renderMessages({messages}) {
     }
 
     const renderedMessage = `
-      <li data-test="message" class="${liClass}">
-        <span class="time">(${message.time})</span>
-        ${messageContent}
+      <li class="${liClass}">
+        <span class="time">(${message.time})<span
+        <span data-test="message">${messageContent}</span>
       </li>
     `;
     
