@@ -132,7 +132,7 @@ async function onUserEntered({name}) {
   }
   fetchMessagesAndRender();
   
-  chatIntervals.messages = setInterval(fetchMessagesAndRender, 3000)
+  chatIntervals.messages = setInterval(fetchMessagesAndRender, 1000)
 
   chatIntervals.participants = setInterval(async ()=>{
     const {data:currentParticipants} = await axios.get('https://mock-api.driven.com.br/api/vm/uol/participants',{
