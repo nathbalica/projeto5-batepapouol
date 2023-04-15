@@ -216,4 +216,4 @@ inputChat.addEventListener('keypress', function(e){
 }, false);
 
 
-setInterval(renderChats, 1000);
+setInterval(renderChats, 500);
