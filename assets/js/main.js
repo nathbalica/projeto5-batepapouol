@@ -3,6 +3,7 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 // let currentUsers = [];
 let nameInput;
 let userName;
+let logged = false;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -82,26 +83,25 @@ function renderMessages(response) {
 renderChats();
 
 function sendMessages(type='message'){
-
-  const now = new Date();
-  const time = now.toLocaleTimeString('pt-BR');
-
-  nameInput = document.querySelector(".input-name");
-  const text = document.querySelector('.input-write');
+  if (logged){
+    const now = new Date();
+    const time = now.toLocaleTimeString('pt-BR');
   
-  const message = {
-    from: nameInput.value,
-    to: "Todos",
-    text: text.value,
-    type: type, // ou "private_message" para o bônus
-    time: time
+    nameInput = document.querySelector(".input-name");
+    const text = document.querySelector('.input-write');
+    
+    const message = {
+      from: nameInput.value,
+      to: "Todos",
+      text: text.value,
+      type: type, // ou "private_message" para o bônus
+      time: time
+    }
+  
+    axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
+    .then(responseReceived)
+    .catch(erroMessage);
   }
-
-  console.log(message)
-
-  axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-  .then(responseReceived)
-  .catch(erroMessage);
 }
   
 
@@ -119,6 +119,7 @@ function userOnline(user) {
 }
 
 function userEntered(user) {
+  logged = true
   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
     .then(() => {
         responseReceived();
@@ -130,40 +131,51 @@ function userEntered(user) {
 }
 
 function checkIfUserExists(user) {
-  axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
+  return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
     .then(response => {
       const participants = response.data;
       const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
       console.log(participants)
       if (existingUser) {
-        console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
-        userRegister();
+        return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
       } else {
         // Fazer a requisição para o servidor
         userEntered(user);
       }
     })
-    .catch(errorHandler);
+    .catch(error => {
+      console.error(error.message);
+      return Promise.reject(error);
+    });
 }
 
 function userRegister() {
-  // pegar o nome com um prompt
-  
-
+  // pegar o nome do input
   nameInput = document.querySelector(".input-name");
   userName = nameInput.value
 
+  // verificar se o nome é válido
+  if (!userName) {
+    console.log('Nome inválido.');
+    return;
+  }
 
   // criar objeto com os dados do usuario
   const user = {
     name: userName
   };
 
-  checkIfUserExists(user);
-  
-  document.querySelector('.input-screen').classList.remove('visible');
+  // verificar se o usuário já existe
+  checkIfUserExists(user)
+    .then(() => {
+      // esconder a tela de entrada
+      document.querySelector('.input-screen').classList.remove('visible');
+    })
+    .catch(() => {
+      // mostrar a tela de entrada novamente
+      document.querySelector('.input-screen').classList.add('visible');
+    });
 }
-
 
 function responseReceived(response) {
   console.log(`sucesso ${response.data}!!!!! :D`);
