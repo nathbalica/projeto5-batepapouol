@@ -3,7 +3,6 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 // let currentUsers = [];
 let nameInput;
 let userName;
-let logged = false;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -12,18 +11,8 @@ function scrollToBottom() {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-
-function renderChats() {
-  if (logged){
-    axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
-      .then(renderMessages)
-      .catch(errorHandler);
-  }
-}
-
-function renderMessages(response) {
+function renderMessages({messages}) {
   const ulMessages = document.querySelector('.chats');
-  let messages = response.data;
   let enteredUsers = [];
   let exitedUsers = [];
   let renderedMessages = [];
@@ -82,8 +71,7 @@ function renderMessages(response) {
   scrollToBottom();
 }
 
-function sendMessages(type='message'){
-  if (logged){
+async function sendMessages(type='message'){
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR');
   
@@ -97,107 +85,129 @@ function sendMessages(type='message'){
       type: type, // ou "private_message" para o bônus
       time: time
     }
-    if (logged){
-      axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-      .then(responseReceived)
-      .catch(erroMessage);
+  
+    try{
+      await axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message);
+    }catch(err){
+      alert('Não foi possível enviar a mensagem desejada.');
     }
+}
+
+const chatIntervals = {
+  status:null,
+  messages:null,
+  participants: null
+};
+
+/**
+ * Quando usuário acaba de entrar em uma sala.
+ */
+async function onUserEntered({name}) {
+  const data = {
+    participants: [],
+    messages:[],
+  };
+
+  // Lidar com o DOM
+  inputChat.addEventListener('keypress', function(e){
+    if(e.keyCode === 13){
+      sendMessages();
+      clearTextArea();
+    }
+  }, false);
+
+  document.querySelector('.input-screen').classList.remove('visible');
+
+  /**
+   * Renderiza chat.
+   */
+  function render(){
+    renderMessages({messages:data.messages});
+  }
+
+  async function fetchMessagesAndRender(){
+    const {data: currentMessages} = await axios.get('https://mock-api.driven.com.br/api/vm/uol/messages');
+      data.messages = currentMessages;
+      render();
+  }
+  fetchMessagesAndRender();
+  
+  chatIntervals.messages = setInterval(fetchMessagesAndRender, 3000)
+
+  chatIntervals.participants = setInterval(async ()=>{
+    const {data:currentParticipants} = await axios.get('https://mock-api.driven.com.br/api/vm/uol/participants',{
+      Accept:'application/json'
+    });
+    data.participants = currentParticipants;
+    render();
+  },5000);
+
+  // Lida com request de status do usuário uma vez logado.  
+  chatIntervals.status = setInterval( async ()=>{
+    await axios.post('https://mock-api.driven.com.br/api/vm/uol/status',{name},{
+      headers:{
+        'Content-type':'application/json'
+      }
+    });
+  }, 5000);
+}
+
+
+/**
+ * Quando o usuário acaba de sair de uma sala.
+ */
+function onUserExited(){
+  for(const i in chatIntervals){
+    clearInterval(chatIntervals[i]);
+    chatIntervals[i] = null;
+  }
+  inputChat.removeEventListener('keypress',onUserMessage, false);
+}
+
+/**
+ * Quando o usuário deseja enviar uma mensagem.
+ */
+function onUserMessage(e){
+  if(e.keyCode === 13){
+    sendMessages();
+    clearTextArea();
   }
 }
-  
 
-function userOnline(user) {
-  // Envia a requisição POST para manter o usuário online
-  const intervalId = setInterval(() => {
-    axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-      .catch(errorHandler);
-  }, 5000);
-
-  // Para o envio da requisição quando o usuário sair da página
-  window.addEventListener('beforeunload', () => {
-    clearInterval(intervalId);
-  });
-}
-
-function userEntered(user) {
-  logged = true
-  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-    .then(() => {
-        responseReceived();
-        renderChats(); // atualiza a lista de usuários
-    })
-    .catch(errorHandler);
-  // Chama a função userOnline para manter o usuário online
-  userOnline(user);
-}
-
-function checkIfUserExists(user) {
-  return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
-    .then(response => {
-      const participants = response.data;
-      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
-      console.log(participants)
-      if (existingUser) {
-        alert("Já existe um usuário online com esse nome. Por favor, escolha outro nome.")
-        return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
-      } else {
-        // Fazer a requisição para o servidor
-        userEntered(user);
-      }
-    })
-    .catch(error => {
-      console.error(error.message);
-      return Promise.reject(error);
-    });
-}
-
-function userRegister() {
+/**
+ * Quando o usuário deseja entrar na sala.
+ */
+async function onUserRegister() {
   // pegar o nome do input
   nameInput = document.querySelector(".input-name");
-  userName = nameInput.value
+  console.log(nameInput);
+  const name = nameInput.value
 
   // verificar se o nome é válido
-  if (!userName) {
+  if (!name) {
     console.log('Nome inválido.');
     return;
   }
+  console.info(`Tentando entrar com o usuário ${name}...`);
 
-  // criar objeto com os dados do usuario
-  const user = {
-    name: userName
-  };
-
-  // verificar se o usuário já existe
-  checkIfUserExists(user)
-    .then(() => {
-      // esconder a tela de entrada
-      document.querySelector('.input-screen').classList.remove('visible');
+  try{
+    await  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', {name},{
+      'Content-type':"application/json"
     })
-    .catch(() => {
-      // mostrar a tela de entrada novamente
-      document.querySelector('.input-screen').classList.add('visible');
-    });
-}
-
-function responseReceived(response) {
-  console.log(`sucesso ${response.data}!!!!! :D`);
-  console.log(response);
-}
-
-function erroMessage(error) {
-  if (error.response && error.response.status === 400) {
-    console.log('Menssagem nao enviada com sucesso!');
+    console.info(`Usuário ${name} agora esta presente na sala.`);
+  }catch(err){
+    if(err?.response?.status >= 400){ 
+      if(err?.response?.status === 400){
+        return alert(`Um usuário ja existe com o nome ${userName}`)
+      }else{
+        return alert(`Não foi possível entrar nesta sala, tente novamente mais tarde.`);
+      }
+    }
   }
+
+  onUserEntered({name});
 }
 
-
-function errorHandler(error) {
-  if (error.response && error.response.status === 400) {
-    alert('Já existe um usuário online com esse nome. Por favor, tente novamente.');
-    window.location.reload(true);
-    userRegister();
-  }
-}
 
 function clearTextArea(){
   inputChat.value = '';
@@ -205,17 +215,9 @@ function clearTextArea(){
 
 inputLogin.addEventListener('keypress', function(e){
     if(e.keyCode === 13){
-      userRegister();
+      onUserRegister();
       clearTextArea();
     }
   }, false);
   
-inputChat.addEventListener('keypress', function(e){
-  if(e.keyCode === 13){
-    sendMessages();
-    clearTextArea();
-  }
-}, false);
 
-
-setInterval(renderChats, 3000);
