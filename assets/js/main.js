@@ -184,8 +184,9 @@ function responseReceived(response) {
 }
 
 function erroMessage(error) {
-  console.error(error);
-  location.reload();
+  if (error.response && error.response.status === 400) {
+    console.log('Menssagem nao enviada com sucesso!');
+  }
 }
 
 function errorHandler(error) {
