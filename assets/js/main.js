@@ -14,9 +14,11 @@ function scrollToBottom() {
 
 
 function renderChats() {
-  axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
-    .then(renderMessages)
-    .catch(errorHandler);
+  if (logged){
+    axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
+      .then(renderMessages)
+      .catch(errorHandler);
+  }
 }
 
 function renderMessages(response) {
@@ -97,10 +99,11 @@ function sendMessages(type='message'){
       type: type, // ou "private_message" para o bônus
       time: time
     }
-  
-    axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-    .then(responseReceived)
-    .catch(erroMessage);
+    if (logged){
+      axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
+      .then(responseReceived)
+      .catch(erroMessage);
+    }
   }
 }
   
@@ -192,6 +195,7 @@ function erroMessage(error) {
 function errorHandler(error) {
   if (error.response && error.response.status === 400) {
     console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
+    window.location.reload(true);
     userRegister();
   }
 }
