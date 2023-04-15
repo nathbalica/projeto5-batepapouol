@@ -134,7 +134,6 @@ function userEntered(user) {
     .catch(errorHandler);
   // Chama a função userOnline para manter o usuário online
   userOnline(user);
-  setInterval(renderChats, 500);
 }
 
 function checkIfUserExists(user) {
@@ -221,4 +220,4 @@ inputChat.addEventListener('keypress', function(e){
   }
 }, false);
 
-
+setInterval(renderChats, 1000);
