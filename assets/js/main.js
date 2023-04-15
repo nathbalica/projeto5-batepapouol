@@ -4,9 +4,6 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 let nameInput;
 let userName;
 let logged = false;
-let currentUser;
-
-let intervalId;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -16,13 +13,13 @@ function scrollToBottom() {
 }
 
 
-function renderChats(){
+function renderChats() {
   if (logged){
     axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
       .then(renderMessages)
       .catch(errorHandler);
-    }
   }
+}
 
 function renderMessages(response) {
   const ulMessages = document.querySelector('.chats');
@@ -108,67 +105,61 @@ function sendMessages(type='message'){
     }
   }
 }
-
-keepLoggedIn: () => {
-  axios
-  .post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-  .catch(()=>{
-      window.confirm('Usuário deslogado.');
-      window.location.reload();
-  });
-},
+  
 
 function userOnline(user) {
   // Envia a requisição POST para manter o usuário online
-  return setInterval(() => {
+  const intervalId = setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-      .catch(() => {
-        window.confirm('Usuário deslogado.');
-        window.location.reload();
-      });
+      .catch(errorHandler);
   }, 5000);
 
+  // Para o envio da requisição quando o usuário sair da página
+  window.addEventListener('beforeunload', () => {
+    clearInterval(intervalId);
+  });
 }
 
-// function userEntered(user) {
-//   logged = true
-//   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-//     .then(() => {
-//         responseReceived();
-//         renderChats(); // atualiza a lista de usuários
-//     })
-//     .catch(errorHandler);
-//   // Chama a função userOnline para manter o usuário online
-//   userOnline(user);
-// }
+function userEntered(user) {
+  logged = true
+  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
+    .then(() => {
+        responseReceived();
+        renderChats(); // atualiza a lista de usuários
+    })
+    .catch(errorHandler);
+  // Chama a função userOnline para manter o usuário online
+  userOnline(user);
+}
 
-// function checkIfUserExists(user) {
-//   return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
-//     .then(response => {
-//       const participants = response.data;
-//       const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase() && participant.status === 'online');
-      
-//       if (existingUser) {
-//         return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
-//       } else {
-//         // Fazer a requisição para o servidor
-//         userEntered(user);
-//       }
-//     })
-//     .catch(error => {
-//       console.error(error.message);
-//       return Promise.reject(error);
-//     });
-// }
+function checkIfUserExists(user) {
+  return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
+    .then(response => {
+      const participants = response.data;
+      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
+      console.log(participants)
+      if (existingUser) {
+        return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
+      } else {
+        // Fazer a requisição para o servidor
+        userEntered(user);
+      }
+    })
+    .catch(error => {
+      console.error(error.message);
+      return Promise.reject(error);
+    });
+}
 
 function userRegister() {
   // pegar o nome do input
   nameInput = document.querySelector(".input-name");
   userName = nameInput.value
 
-  while(nameInput === '' || nameInput === null){
-    alert('Nome de usuário inválido! Digite um nome valido');
-    document.querySelector('.input-screen').classList.add('visible');
+  // verificar se o nome é válido
+  if (!userName) {
+    console.log('Nome inválido.');
+    return;
   }
 
   // criar objeto com os dados do usuario
@@ -176,40 +167,20 @@ function userRegister() {
     name: userName
   };
 
-  console.log(user)
-
-  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-  .then(response => {
-          logged = true;
-          document.querySelector('.input-screen').classList.remove('visible');
-          renderChats(); // atualiza a lista de usuários
-          responseReceived(response);
-          setInterval(() => {
-            axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-              .catch(() => {
-                window.confirm('Usuário deslogado.');
-                window.location.reload();
-              });
-          }, 5000);
-        }
-      )
-  .catch(error => {
-      if ( error.response.status === 400 ){
-        alert('Nome de usuário inválido! Digite um nome valido');
-        document.querySelector('.input-screen').classList.add('visible');
-        setTimeout(window.location.reload(), 1000);
-      }else {
-        alert('Ocorreu um errinho aqui. A culpa foi nossa, apenas tente recarregar a página <3');
-    }
+  // verificar se o usuário já existe
+  checkIfUserExists(user)
+    .then(() => {
+      // esconder a tela de entrada
+      document.querySelector('.input-screen').classList.remove('visible');
+    })
+    .catch(() => {
+      // mostrar a tela de entrada novamente
+      document.querySelector('.input-screen').classList.add('visible');
     });
 }
 
-function errorHandler() {
-    console.log('Desconectado!');
-    userRegister();
-}
 function responseReceived(response) {
-  console.log(`sucesso ${response}!!!!! :D`);
+  console.log(`sucesso ${response.data}!!!!! :D`);
   console.log(response);
 }
 
@@ -219,6 +190,13 @@ function erroMessage(error) {
   }
 }
 
+function errorHandler(error) {
+  if (error.response && error.response.status === 400) {
+    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
+    window.location.reload(true);
+    userRegister();
+  }
+}
 
 function clearTextArea(){
   inputChat.value = '';
@@ -237,5 +215,6 @@ inputChat.addEventListener('keypress', function(e){
     clearTextArea();
   }
 }, false);
+
 
 setInterval(renderChats, 3000);
