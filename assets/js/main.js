@@ -82,8 +82,6 @@ function renderMessages(response) {
   scrollToBottom();
 }
 
-renderChats();
-
 function sendMessages(type='message'){
   if (logged){
     const now = new Date();
@@ -140,6 +138,7 @@ function checkIfUserExists(user) {
       const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
       console.log(participants)
       if (existingUser) {
+        alert("Já existe um usuário online com esse nome. Por favor, escolha outro nome.")
         return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
       } else {
         // Fazer a requisição para o servidor
@@ -194,7 +193,7 @@ function erroMessage(error) {
 
 function errorHandler(error) {
   if (error.response && error.response.status === 400) {
-    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
+    alert('Já existe um usuário online com esse nome. Por favor, tente novamente.');
     window.location.reload(true);
     userRegister();
   }
