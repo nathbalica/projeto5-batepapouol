@@ -136,8 +136,8 @@ function checkIfUserExists(user) {
   return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
     .then(response => {
       const participants = response.data;
-      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
-      console.log(participants)
+      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase() && participant.status === 'online');
+      
       if (existingUser) {
         return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
       } else {
@@ -155,12 +155,6 @@ function userRegister() {
   // pegar o nome do input
   nameInput = document.querySelector(".input-name");
   userName = nameInput.value
-
-  // verificar se o nome é válido
-  if (!userName) {
-    console.log('Nome inválido.');
-    return;
-  }
 
   // criar objeto com os dados do usuario
   const user = {
