@@ -4,6 +4,9 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 let nameInput;
 let userName;
 let logged = false;
+let currentUser;
+
+let intervalId;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -13,13 +16,13 @@ function scrollToBottom() {
 }
 
 
-function renderChats() {
+function renderChats(){
   if (logged){
     axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
       .then(renderMessages)
       .catch(errorHandler);
+    }
   }
-}
 
 function renderMessages(response) {
   const ulMessages = document.querySelector('.chats');
@@ -105,19 +108,26 @@ function sendMessages(type='message'){
     }
   }
 }
-  
+
+keepLoggedIn: () => {
+  axios
+  .post('https://mock-api.driven.com.br/api/vm/uol/status', user)
+  .catch(()=>{
+      window.confirm('Usuário deslogado.');
+      window.location.reload();
+  });
+},
 
 function userOnline(user) {
   // Envia a requisição POST para manter o usuário online
-  const intervalId = setInterval(() => {
+  return setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-      .catch(errorHandler);
+      .catch(() => {
+        window.confirm('Usuário deslogado.');
+        window.location.reload();
+      });
   }, 5000);
 
-  // Para o envio da requisição quando o usuário sair da página
-  window.addEventListener('beforeunload', () => {
-    clearInterval(intervalId);
-  });
 }
 
 // function userEntered(user) {
@@ -166,31 +176,36 @@ function userRegister() {
     name: userName
   };
 
+  console.log(user)
+
   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
   .then(response => {
           logged = true;
           document.querySelector('.input-screen').classList.remove('visible');
-          responseReceived(response);
           renderChats(); // atualiza a lista de usuários
+          responseReceived(response);
+          setInterval(() => {
+            axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
+              .catch(() => {
+                window.confirm('Usuário deslogado.');
+                window.location.reload();
+              });
+          }, 5000);
         }
       )
-
   .catch(error => {
-      console.log(error)
       if ( error.response.status === 400 ){
         alert('Nome de usuário inválido! Digite um nome valido');
         document.querySelector('.input-screen').classList.add('visible');
-    } else {
-        alert('Ocorreu um erro no servidor! Tente novamente mais tarde');
-      }    
+        setTimeout(window.location.reload(), 1000);
+      }else {
+        alert('Ocorreu um errinho aqui. A culpa foi nossa, apenas tente recarregar a página <3');
+    }
     });
-  // Chama a função userOnline para manter o usuário online
-  userOnline(user);
 }
 
 function errorHandler() {
-    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
-    window.location.reload(true);
+    console.log('Desconectado!');
     userRegister();
 }
 function responseReceived(response) {
@@ -222,6 +237,5 @@ inputChat.addEventListener('keypress', function(e){
     clearTextArea();
   }
 }, false);
-
 
 setInterval(renderChats, 3000);
