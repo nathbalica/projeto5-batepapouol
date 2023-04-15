@@ -2,7 +2,6 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 
 // let currentUsers = [];
 let nameInput;
-let userName;
 
 let inputLogin = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
@@ -54,8 +53,8 @@ function renderMessages({messages}) {
 
     const renderedMessage = `
       <li class="${liClass}">
-        <span class="time">(${message.time})<span
-        <span data-test="message">${messageContent}</span>
+        <span class="time">(${message.time})</span>
+        <span data-test="message" class="span-message">${messageContent}</span>
       </li>
     `;
     
@@ -197,8 +196,8 @@ async function onUserRegister() {
     console.info(`Usuário ${name} agora esta presente na sala.`);
   }catch(err){
     if(err?.response?.status >= 400){ 
-      if(err?.response?.status === 400){
-        return alert(`Um usuário ja existe com o nome ${userName}`)
+        if(err?.response?.status === 400){
+          return alert(`Um usuário ja existe com o nome ${name}`)
       }else{
         return alert(`Não foi possível entrar nesta sala, tente novamente mais tarde.`);
       }
