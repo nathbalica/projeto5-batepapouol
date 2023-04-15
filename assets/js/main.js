@@ -82,8 +82,6 @@ function renderMessages(response) {
   scrollToBottom();
 }
 
-renderChats();
-
 function sendMessages(type='message'){
   if (logged){
     const now = new Date();
@@ -190,7 +188,6 @@ function erroMessage(error) {
     console.log('Menssagem nao enviada com sucesso!');
   }
 }
-
 
 function errorHandler(error) {
   if (error.response && error.response.status === 400) {
