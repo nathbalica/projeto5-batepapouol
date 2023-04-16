@@ -84,7 +84,7 @@ function sendMessages(type='message'){
     }
     if (logged){
       axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-      .then(responseReceived)
+      .then(sucessGetMessage)
       .catch(erroMessage);
     }
   }
@@ -154,6 +154,7 @@ function erroKeepConnected(error){
 function erroMessage(error) {
   if (error.response && error.response.status === 400) {
     console.log('Menssagem nao enviada com sucesso!');
+    window.location.reload();
   }
 }
 
