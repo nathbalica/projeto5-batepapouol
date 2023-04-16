@@ -3,14 +3,12 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 // let currentUsers = [];
 let userName;
 let keepConnected;
-let logged = false;
 
 let messages = [];
 
 let inputChat = document.querySelector('.input-write')
 
 function renderMessages(response) {
-  if (logged){
     const ulMessages = document.querySelector('.chats');
     let messages = response.data;
     let enteredUsers = [];
@@ -68,7 +66,6 @@ function renderMessages(response) {
   
     scrollToBottom();
   }
-}
 
 function sendMessages(type='message'){
     const now = new Date();
@@ -93,7 +90,7 @@ function sendMessages(type='message'){
 
 function getMessages(){
   axios.get("https://mock-api.driven.com.br/api/vm/uol/messages")
-  .then(renderMessages)
+  .then(sucessGetMessage)
   .catch(erroGetMessage)
 }
 
@@ -113,15 +110,13 @@ function userRegister() {
 
   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
   .then(response => {
-    console.log(response);
-    logged = true
-    getMessages();
     responseReceived(response);
+
+    getMessages();
+
+    setInterval(getMessages, 1000);
   })
   .catch(existingdUser)
-
-  
-  setInterval(getMessages, 1000);
 
   keepConnected = setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
@@ -132,7 +127,7 @@ function userRegister() {
 
 function sucessGetMessage(response){
   console.log(response);
-  getMessages();
+  renderMessages(response);
 }
 
 function responseReceived(response) {
