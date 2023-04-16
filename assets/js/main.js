@@ -121,7 +121,7 @@ function userRegister() {
   .catch(existingdUser)
 
   
-  setInterval(getMessages, 3000);
+  setInterval(getMessages, 1000);
 
   keepConnected = setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
