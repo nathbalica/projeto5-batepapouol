@@ -129,7 +129,7 @@ function userEntered(user) {
     .catch(errorHandler);
   // Chama a função userOnline para manter o usuário online
   userOnline(user);
-  setInterval(renderChats, 500);
+  setInterval(renderChats, 1000);
 }
 
 function checkIfUserExists(user) {
