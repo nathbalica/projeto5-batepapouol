@@ -4,12 +4,13 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 let userName;
 let keepConnected;
 
-let messages = [];
-
 let inputChat = document.querySelector('.input-write')
 
 function renderMessages(response) {
     const ulMessages = document.querySelector('.chats');
+
+    ulMessages.innerHTML = '';
+
     let messages = response.data;
     let enteredUsers = [];
     let exitedUsers = [];
@@ -49,12 +50,14 @@ function renderMessages(response) {
           console.error(`Unknown message type: ${message.type}`);
           return;
       }
-  
+      
+      //adicionando o data-test="message"
       const renderedMessage = `
       <li data-test="message" class="${liClass}">
       <span class="time">(${message.time})</span>
       ${messageContent}</li>`;
       
+      // evitar que o chat se duplique
       if (!renderedMessages.includes(renderedMessage)) {
         renderedMessages.push(renderedMessage);
       }
