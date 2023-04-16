@@ -63,12 +63,7 @@ function renderMessages(response) {
         return;
     }
 
-    const renderedMessage = `
-      <li data-test="message" class="${liClass}">
-        <span class="time">(${message.time})</span>
-        ${messageContent}
-      </li>
-    `;
+    const renderedMessage = `<li data-test="message" class="${liClass}"><span data-test="message" class="time">(${message.time})</span>${messageContent}</li>`;
     
     if (!renderedMessages.includes(renderedMessage)) {
       renderedMessages.push(renderedMessage);
@@ -129,7 +124,7 @@ function userEntered(user) {
     .catch(errorHandler);
   // Chama a função userOnline para manter o usuário online
   userOnline(user);
-  setInterval(renderChats, 1000);
+  setInterval(renderChats, 2999);
 }
 
 function checkIfUserExists(user) {
