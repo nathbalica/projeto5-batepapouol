@@ -114,11 +114,13 @@ function userRegister() {
   .then(response => {
     responseReceived(response);
 
+    // Exibe o histórico de mensagens
     getMessages();
 
     setInterval(getMessages, 3000);
   })
-  .catch(existingdUser)
+  .catch(existingdUser);
+
 
   keepConnected = setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
