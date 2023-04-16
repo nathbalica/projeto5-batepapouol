@@ -1,8 +1,8 @@
 axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 
 // let currentUsers = [];
-let nameInput;
 let userName;
+let keepConnected;
 let logged = false;
 
 let inputLogin = document.querySelector('.input-name')
@@ -17,7 +17,7 @@ function renderChats() {
   if (logged){
     axios.get('https://mock-api.driven.com.br/api/vm/uol/messages')
       .then(renderMessages)
-      .catch(errorHandler);
+      .catch(erroMessage);
   }
 }
 
@@ -81,12 +81,11 @@ function sendMessages(type='message'){
   if (logged){
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR');
-  
-    nameInput = document.querySelector(".input-name");
+
     const text = document.querySelector('.input-write');
     
     const message = {
-      from: nameInput.value,
+      from: userName,
       to: "Todos",
       text: text.value,
       type: type, // ou "private_message" para o bônus
@@ -105,7 +104,9 @@ function userOnline(user) {
   // Envia a requisição POST para manter o usuário online
   const intervalId = setInterval(() => {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
-      .catch(errorHandler);
+      .catch(error => {
+          console.info("Nao foi possivel renderizar o chat!!!")
+      });
   }, 5000);
 
   // Para o envio da requisição quando o usuário sair da página
@@ -114,69 +115,49 @@ function userOnline(user) {
   });
 }
 
-function userEntered(user) {
-  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
-  .then(() => {
-      logged = true
-      responseReceived();
-       // atualiza a lista de usuários
-    })
-    .catch(errorHandler);
-  // Chama a função userOnline para manter o usuário online
-  userOnline(user);
-  setInterval(renderChats, 2999);
-}
-
-function checkIfUserExists(user) {
-  return axios.get('https://mock-api.driven.com.br/api/vm/uol/participants')
-    .then(response => {
-      const participants = response.data;
-      const existingUser = participants.find(participant => participant.name.toLowerCase() === user.name.toLowerCase());
-      console.log(participants)
-      if (existingUser) {
-        return Promise.reject(new Error('Já existe um usuário online com esse nome. Por favor, escolha outro nome.'));
-      } else {
-        // Fazer a requisição para o servidor
-        userEntered(user);
-      }
-    })
-    .catch(error => {
-      console.error(error.message);
-      return Promise.reject(error);
-    });
-}
-
 function userRegister() {
   // pegar o nome do input
-  nameInput = document.querySelector(".input-name");
-  userName = nameInput.value
+  userName = prompt("Qual o seu nome?");
 
   // verificar se o nome é válido
-  if (!userName) {
-    console.log('Nome inválido.');
-    return;
+  while(userName === '' || userName === null){
+    alert('Nome de usuário inválido! Digite um nome valido');
+    userName = prompt('Qual o seu nome?');
   }
 
-  // criar objeto com os dados do usuario
-  const user = {
-    name: userName
-  };
+  user = {
+    'name' : userName
+  }
 
-  // verificar se o usuário já existe
-  checkIfUserExists(user)
-    .then(() => {
-      // esconder a tela de entrada
-      document.querySelector('.input-screen').classList.remove('visible');
-    })
-    .catch(() => {
-      // mostrar a tela de entrada novamente
-      document.querySelector('.input-screen').classList.add('visible');
-    });
+  axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
+  .then(response => {
+    console.log(response);
+    logged = true
+    renderChats();
+    responseReceived(response);
+  })
+  .catch(existingdUser)
+
+  
+  setInterval(renderChats, 3000);
+
+  keepConnected = setInterval(() => {
+    axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
+      .catch(erroKeepConnected);
+  }, 5000);
+
 }
 
 function responseReceived(response) {
   console.log(`sucesso ${response.data}!!!!! :D`);
   console.log(response);
+}
+
+function erroKeepConnected(error){
+  console.log("Erro ao manter conectado...");
+  console.log(error);
+  alert('Ocorreu um erro inesperado, entre novamente informando um nome de usuário!');
+  window.location.reload(true);
 }
 
 function erroMessage(error) {
@@ -185,30 +166,21 @@ function erroMessage(error) {
   }
 }
 
-function errorHandler(error) {
+function existingdUser(error) {
   if (error.response && error.response.status === 400) {
     console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
     window.location.reload(true);
-    userRegister();
-  }
-}
-
-function clearTextArea(){
-  inputChat.value = '';
-}
-
-inputLogin.addEventListener('keypress', function(e){
-    if(e.keyCode === 13){
-      userRegister();
-      clearTextArea();
+    } else {
+      alert('Ocorreu um erro no servidor! Tente novamente mais tarde');
     }
-  }, false);
+}
   
 inputChat.addEventListener('keypress', function(e){
   if(e.keyCode === 13){
     sendMessages();
-    clearTextArea();
+    inputChat.value = '';
   }
 }, false);
 
 
+userRegister();
