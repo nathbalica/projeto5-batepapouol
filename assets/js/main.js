@@ -159,7 +159,7 @@ function erroMessage(error) {
 
 function existingdUser(error) {
   if (error.response && error.response.status === 400) {
-    console.log('Já existe um usuário online com esse nome. Por favor, tente novamente.');
+    alert('Já existe um usuário online com esse nome. Por favor, tente novamente.');
     window.location.reload(true);
     } else {
       alert('Ocorreu um erro no servidor! Tente novamente mais tarde');
