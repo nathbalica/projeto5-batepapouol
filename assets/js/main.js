@@ -77,22 +77,23 @@ function sendMessages(){
       from: userName,
       to: "Todos",
       text: text.value,
-      type: 'message', // ou "private_message" para o bônus
+      type: "message",
       time: time
     };
 
     axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
-    .then(sucessGetMessage)
+    .then(messageSentSucess)
     .catch(errorSendMessage);
-
-    text.value = '';
 }
 
+function messageSentSucess(response){
+  getMessages();
+}
 
 function getMessages(){
   axios.get("https://mock-api.driven.com.br/api/vm/uol/messages")
   .then(sucessGetMessage)
-  .catch(erroGetMessage)
+  .catch(errorGetMessage)
 }
 
 function userRegister() {
@@ -115,7 +116,7 @@ function userRegister() {
 
     getMessages();
 
-    setInterval(getMessages, 1000);
+    setInterval(getMessages, 3000);
   })
   .catch(existingdUser)
 
@@ -148,10 +149,10 @@ function erroKeepConnected(error){
   window.location.reload(true);
 }
 
-function erroMessage(error) {
-  alert('Ocorreu um erro inesperado ao enviar a mensagem! Tente novamente mais tarde', error);
-  window.location.reload();
-  }
+function errorGetMessage(error) {
+  console.log('Erro ao buscar as mensagens');
+  alert('Ocorreu um erro ao buscar as mensagens do chat! Tente novamente mais tarde!');
+}
 
 function errorSendMessage(error){
   console.log('Erro ao enviar mensagem');
