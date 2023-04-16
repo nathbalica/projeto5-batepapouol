@@ -67,7 +67,7 @@ function renderMessages(response) {
     scrollToBottom();
   }
 
-function sendMessages(type='message'){
+function sendMessages(){
     const now = new Date();
     const time = now.toLocaleTimeString('pt-BR');
 
@@ -77,16 +77,17 @@ function sendMessages(type='message'){
       from: userName,
       to: "Todos",
       text: text.value,
-      type: type, // ou "private_message" para o bônus
+      type: 'message', // ou "private_message" para o bônus
       time: time
     };
 
     axios.post("https://mock-api.driven.com.br/api/vm/uol/messages", message)
     .then(sucessGetMessage)
-    .catch(erroMessage);
+    .catch(errorSendMessage);
 
     text.value = '';
 }
+
 
 function getMessages(){
   axios.get("https://mock-api.driven.com.br/api/vm/uol/messages")
@@ -151,6 +152,13 @@ function erroMessage(error) {
   alert('Ocorreu um erro inesperado ao enviar a mensagem! Tente novamente mais tarde', error);
   window.location.reload();
   }
+
+function errorSendMessage(error){
+  console.log('Erro ao enviar mensagem');
+  console.log(error);
+  alert('Ocorreu um erro inesperado ao enviar a mensagem! Tente novamente mais tarde');
+  window.location.reload();
+}
 
 function existingdUser(error) {
   if (error.response && error.response.status === 400) {
