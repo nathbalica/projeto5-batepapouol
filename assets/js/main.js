@@ -5,6 +5,8 @@ let userName;
 let keepConnected;
 let logged = false;
 
+let messages;
+
 let inputChat = document.querySelector('.input-write')
 
 function renderMessages(response) {
