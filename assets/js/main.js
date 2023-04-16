@@ -63,7 +63,10 @@ function renderMessages(response) {
         return;
     }
 
-    const renderedMessage = `<li data-test="message" class="${liClass}"><span data-test="message" class="time">(${message.time})</span>${messageContent}</li>`;
+    const renderedMessage = `
+    <li data-test="message" class="${liClass}">
+    <span class="time">(${message.time})</span>
+    ${messageContent}</li>`;
     
     if (!renderedMessages.includes(renderedMessage)) {
       renderedMessages.push(renderedMessage);

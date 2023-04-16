@@ -166,7 +166,7 @@ footer ion-icon{
 
 
 
-.menu-background{
+/* .menu-background{
     background: rgba(0, 0, 0, 0.6);
     width:100%;
     height: 100%;
@@ -234,7 +234,6 @@ aside.sidebar li{
 aside.sidebar ion-icon {
     margin-right: 10px;
     font-size: 20px;
-    /* margin-top: -2px; */
     flex-shrink: 0;
   }
 
@@ -277,7 +276,7 @@ aside.sidebar ion-icon {
 
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centraliza horizontalmente */
+    align-items: center; 
     display: none;
 
 }
@@ -330,7 +329,7 @@ aside.sidebar ion-icon {
     font-size: 18px;
     color: #696969;
     border: none;
-}
+} */
 
 
 
