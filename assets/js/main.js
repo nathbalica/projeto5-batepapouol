@@ -117,7 +117,7 @@ function userRegister() {
   axios.post('https://mock-api.driven.com.br/api/vm/uol/participants', user)
   .then(response => {
     responseReceived(response);
-
+    document.querySelector('.input-screen').classList.remove('visible')
     // Exibe o histórico de mensagens
     getMessages();
 
@@ -131,7 +131,6 @@ function userRegister() {
       .catch(erroKeepConnected);
   }, 5000);
 
-  document.querySelector('.input-screen').classList.remove('visible')
 
 }
 
