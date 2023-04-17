@@ -3,7 +3,7 @@ axios.defaults.headers.common['Authorization'] = 'kksZoUujYOBy6P4KbiXoQXMT';
 // let currentUsers = [];
 let userName;
 let keepConnected;
-
+let inputUser = document.querySelector('.input-name')
 let inputChat = document.querySelector('.input-write')
 
 function renderMessages(response) {
@@ -101,12 +101,13 @@ function getMessages(){
 
 function userRegister() {
   // pegar o nome do input
-  userName = prompt("Qual o seu nome?");
+  // userName = prompt("Qual o seu nome?");
+  userName = inputUser.value;
 
   // verificar se o nome é válido
   while(userName === '' || userName === null){
     alert('Nome de usuário inválido! Digite um nome valido');
-    userName = prompt('Qual o seu nome?');
+    userName = inputUser.value;
   }
 
   user = {
@@ -129,6 +130,8 @@ function userRegister() {
     axios.post('https://mock-api.driven.com.br/api/vm/uol/status', user)
       .catch(erroKeepConnected);
   }, 5000);
+
+  document.querySelector('.input-screen').classList.remove('visible')
 
 }
 
@@ -182,8 +185,15 @@ inputChat.addEventListener('keypress', function(e){
   }
 }, false);
 
+inputUser.addEventListener('keypress', function(e){
+  if(e.keyCode === 13){
+    userRegister();
+    inputUser.value = '';
+  }
+}, false);
+
 function scrollToBottom() {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-userRegister();
+// userRegister();
